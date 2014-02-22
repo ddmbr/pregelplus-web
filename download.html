@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pregel+</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <style>
+    body {
+        margin-top: 60px;
+    }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Pregel+</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="introduction.html">Introduction</a>
+					</li>
+					<li><a href="download.html">Download</a>
+					</li>
+					<li><a href="documentation.html">Documentation</a>
+					</li>
+					<li><a href="publications.html">Publications</a>
+					</li>
+					<li><a href="team.html">Team</a>
+					</li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12">
+			<h1>System Code [<a href="code/pregelplus.zip">Download</a>]</h1>
+			<table border="0" height="2cm"></table>
+			<h4>Pregel+ system code is just a set of header files, one may include them into the application code and compile using GCC. The current system code runs in Linux.</h4>
+            <p>&nbsp;</p>
+			<h1>Toy Graph [<a href="code/toy.txt">Download</a>]</h1>
+			<table border="0" height="2cm"></table>
+			<h4>Each line represents a vertex.</h4>
+			<h4><b>Line format:</b> vertexID \t numberOfNeighbors _ neighbor1ID _ neighbor2ID _ ... </h4>
+			<p>&nbsp;</p>
+			<img width="500" src="figs/toy.jpg"></img>
+			<p>&nbsp;</p>
+			<h4>To run the application code with the toy graph, put the data to HDFS as follows:</h4>
+			<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;●&nbsp&nbsphadoop fs -mkdir /toyFolder</h4>
+			<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;●&nbsp&nbsphadoop fs -put {<i>your_directory_for_toy.txt</i>}/toy.txt /toyFolder</h4>
+			<h4>To check the result, type the following command:</h4>
+			<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;●&nbsp&nbsphadoop fs -cat /toyOutput/*</h4>
+			<p>&nbsp;</p>
+			<h1>Application Code</h1>
+			<table border="0" height="2cm"></table>
+			<h3>Ordinary Mode</h3>
+			<p>●&nbsp&nbspHash-Min [<a href="code/pregel_app_hashmin.tar.gz">Download</a>]</p>
+			<p>●&nbsp&nbspPageRank [<a href="code/pregel_app_pagerank.tar.gz">Download</a>]</p>
+			<p>●&nbsp&nbspSSSP (Single-Source Shortest Path) [<a href="code/pregel_app_sssp.tar.gz">Download</a>]</p>
+			<p>●&nbsp&nbspS-V [<a href="code/pregel_app_sv.tar.gz">Download</a>]</p>
+			<p>●&nbsp&nbspAttribute Broadcast [<a href="code/pregel_app_fieldbcast.tar.gz">Download</a>]</p>
+			<p>&nbsp;</p>
+			<h3>Mirroring Mode</h3>
+			<p>●&nbsp&nbspHash-Min [<a href="code/ghost_app_hashmin.tar.gz">Download</a>]</p>
+			<p>●&nbsp&nbspPageRank [<a href="code/ghost_app_pagerank.tar.gz">Download</a>]</p>
+			<p>●&nbsp&nbspSSSP [<a href="code/ghost_app_sssp.tar.gz">Download</a>]</p>
+			<p>&nbsp;</p>
+			<h3>Request-Respond Paradigm</h3>
+			<p>●&nbsp&nbspS-V [<a href="code/req_app_sv.tar.gz">Download</a>]</p>
+			<p>●&nbsp&nbspAttribute Broadcast [<a href="code/req_app_fieldbcast.tar.gz">Download</a>]</p>
+			</div>
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- JavaScript -->
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+</body>
+
+</html>

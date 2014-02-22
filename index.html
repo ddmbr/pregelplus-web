@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pregel+</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <style>
+    body {
+        margin-top: 60px;
+    }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Pregel+</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="introduction.html">Introduction</a>
+					</li>
+					<li><a href="download.html">Download</a>
+					</li>
+					<li><a href="documentation.html">Documentation</a>
+					</li>
+					<li><a href="publications.html">Publications</a>
+					</li>
+					<li><a href="team.html">Team</a>
+					</li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Pregel+: More Than Yet Another Pregel-Like System</h1>
+				<p>&nbsp;</p>
+                <p>Pregel+ does not just aim to be yet another open-source Pregel counterpart. Compared with state-of-the-art Pregel-like systems, Pregel+'s design stands out by its efficiency and simplicity. It is much easier to implement a Pregel program in Pregel+ than in any other system, and abundant tutorials and examples are provided. Pregel+ is also a better choice for researchers who wants to change the system to support new functionalities, as the design of Pregel+ is much simpler and more flexible than other systems. </p>
+				<p>Pregel+ supports two effective message reduction techniques: (1)vertex mirroring and (2)a new request-respond paradigm. These techniques not only reduce the total number of messages exchanged through the network, but also bound the number of messages sent/received by any vertex, especially for processing power-law graphs and (relatively) dense graphs.</p>
+				<p>As a sub-project of Pregel+, we also explore the opportunity of going beyond vertex-centric computing, and developed another system <a href="http://www.cse.cuhk.edu.hk/blogel">Blogel</a> that supports efficient graph partitioning and block-centric computing, which achieves orders of magnitude performance improvement, especially for processing large-diameter graphs and (relatively) dense graphs.</p>
+            </div>
+        </div>
+		
+		<div class="row">
+            <div class="col-lg-12">
+                <h3>Performance Highligts</h3>
+				<p>●&nbsp;&nbsp;Running <a href="http://arxiv.org/pdf/1203.5387.pdf">Hash-Min</a>, an algorithm for computing connected components of a small-diameter graph, over the <a href="http://www.cse.cuhk.edu.hk/~jcheng/papers/VCindex_sigmod12.pdf">BTC dataset</a> in a cluster with 1 master machine and 15 slave machines each running 1 worker.</p>
+				<table border="1">
+					<tr>
+						<td width="200" align="center">
+							<b>Pregel+</b>
+						</td>
+						<td width="200" align="center">
+							<b>Giraph</b>
+						</td>
+						<td width="200" align="center">
+							<b>GraphLab</b>
+						</td>
+					</tr>
+					<tr>
+						<td width="200" align="center">
+							49 seconds
+						</td>
+						<td width="200" align="center">
+							261 seconds
+						</td>
+						<td width="200" align="center">
+							408 seconds
+						</td>
+					</tr>
+				</table>
+				<p>&nbsp;</p>
+				<p>●&nbsp;&nbsp;Running Hash-Min over the BTC dataset in a cluster with 1 master machine and 15 slave machines each running 8 workers.</p>
+				<table border="1">
+					<tr>
+						<td width="200" align="center">
+							<b>Pregel+</b>
+						</td>
+						<td width="200" align="center">
+							<b>Pregel+ with Mirroring</b>
+						</td>
+						<td width="200" align="center">
+							<b>Giraph</b>
+						</td>
+						<td width="200" align="center">
+							<b>GraphLab</b>
+						</td>
+					</tr>
+					<tr>
+						<td width="200" align="center">
+							27 seconds
+						</td>
+						<td width="200" align="center">
+							10 seconds
+						</td>
+						<td width="200" align="center">
+							Out-of-memory
+						</td>
+						<td width="200" align="center">
+							159 seconds
+						</td>
+					</tr>
+				</table>
+				<p>&nbsp;</p>
+				<img width="800" src="figs/msgNum_btc.jpg"></img>
+				<p>(Number of messages sent by each worker using Pregel+, blue bars — ordinary mode, red bars — mirroring)</p>
+				<p>&nbsp;</p>
+				<p>●&nbsp;&nbsp;Running <a href="papers/ppa.pdf">S-V</a>, an algorithm for computing connected components of a large-diameter graph, over the <a href="http://www.dis.uniroma1.it/challenge9/download.shtml">USA road network</a> in a cluster with 1 master machine and 15 slave machines each running 4 workes.</p>
+				<table border="1">
+					<tr>
+						<td width="200" align="center">
+							<b>Pregel+</b>
+						</td>
+						<td width="400" align="center">
+							<b>Pregel+ with Request-Respond Paradigm</b>
+						</td>
+						<td width="200" align="center">
+							<b>Giraph</b>
+						</td>
+					</tr>
+					<tr>
+						<td width="200" align="center">
+							261 seconds
+						</td>
+						<td width="400" align="center">
+							138 seconds
+						</td>
+						<td width="200" align="center">
+							559 seconds
+						</td>
+					</tr>
+				</table>
+				<p>&nbsp;</p>
+				<img width="800" src="figs/msgNum_usa.jpg"></img>
+				<p>(Number of messages sent by each worker using Pregel+, blue bars — ordinary mode, red bars — request-respond paradigm)</p>
+            </div>
+        </div>
+        
+    <div class="container">
+        <hr>
+        <footer>
+            <div class="row">
+                <div id="clustrmaps-widget" style="position:relative; float:right; right:0px; bottom:0px;"></div><script type="text/javascript">var _clustrmaps = {'url' : 'http://www.cse.cuhk.edu.hk/pregelplus/', 'user' : 1132399, 'server' : '2', 'id' : 'clustrmaps-widget', 'version' : 1, 'date' : '2014-02-15', 'lang' : 'zh', 'corners' : 'square' };(function (){ var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'http://www2.clustrmaps.com/counter/map.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);})();</script><noscript><a href="http://www2.clustrmaps.com/user/01d11476f"><img src="http://www2.clustrmaps.com/stats/maps-no_clusters/www.cse.cuhk.edu.hk-pregelplus--thumb.jpg" alt="Locations of visitors to this page" /></a></noscript>
+            </div>
+        </footer>
+    </div>
+        
+    </div>
+    
+    
+    
+    <!-- /.container -->
+
+    <!-- JavaScript -->
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+</body>
+
+</html>
