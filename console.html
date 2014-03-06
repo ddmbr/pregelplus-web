@@ -105,6 +105,7 @@
 			<p>scp $HOME/hashmin/run {username}@slave<i>i</i>:$HOME/hashmin</p>
 		</div>
 		<p>Alternatively, one may use a shell script like <a href="code/distribute.sh" target="_blank">this one</a> for program distribution, using command <b>./distribute.sh $HOME/hashmin/run <i>N</i></b>.</p>
+		<p>&nbsp;</p>
 		
 		<h2>Running the Program</h2>
 		<p>Finally, use the following command to run the compiled program:</p>
@@ -115,6 +116,7 @@
 		<div class="alert alert-info">
 			<p>mpiexec -n <i>N</i> -f $HOME/hashmin/conf $HOME/hashmin/run</p>
 		</div>
+		<p>Sometimes, automatic HDFS binding may fail and the program will report <b>Input path "/toyFolder" does not exist!</b> In this case, you need to edit the system program file <b>utils/ydhdfs.h</b> to hardwire the connection. Change <b>hdfsConnect("default", 0)</b> of function <b>getHdfsFS()</b> to <b>hdfsConnect({<i>your_NameNode_IP</i>}, {<i>your_NameNode_port</i>})</b> as configured in <b>$HADOOP_HOME/conf/core-site.xml</b>.</p>
 	</div>
     <!-- /.container -->
 
