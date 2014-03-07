@@ -63,7 +63,7 @@
         <p>&nbsp;</p>
 		<p>We assume that a cluster is already set up as in the <a href="deploy.html", target="_blank">tutorial for Pregel+ deployment</a>.</p>
 		<p>We now show how to run the Hash-Min algorithm for computing connected components from the console. See Section 3.2 of <a href="papers/ppa.pdf" target="_blank">our technical report</a> for the algorithm.</p>
-		<p>Download the <a href="code/system.zip">system code</a> (four files) and extract to a location of your choice, such as <b>$HOME/pregelplus</b>. This is the root directory of our system code.</p>
+		<p>Download the <a href="code/system.zip">system code</a> (four directories)  and extract to a location of your choice, such as <b>$HOME/pregelplus</b>. This is the root directory of our system code.</p>
 		<p>Download the <a href="code/apps/basic/hashmin.zip">application code of Hash-Min</a> (two files) and extract to a location of your choice, such as <b>$HOME/hashmin</b>. This is the directory for the Hash-Min application.</p>
 		<p>Now, let us take a look at <b>$HOME/hashmin/run.cpp</b>. It runs Hash-Min over the data under HDFS path <b>/toyFolder</b>, and the results are written under HDFS path <b>/toyOutput</b>.</p>
 		<p>To run the program, we need to put a graph data under HDFS path <b>/toyFolder</b>. Download the <a href="code/toy.txt" target="_blank">toy graph</a> described on the <a href="download.html" target="_blank">download page</a> and put it onto HDFS as follows:</p>
