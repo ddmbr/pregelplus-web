@@ -115,6 +115,13 @@
 			<p>mpiexec -n <i>N</i> -f $HOME/hashmin/conf $HOME/hashmin/run</p>
 		</div>
 		<p>Sometimes, automatic HDFS binding may fail and the program will report <b>Input path "/toyFolder" does not exist!</b> In this case, you need to edit the system program file <b>utils/ydhdfs.h</b> to hardwire the connection. Change <b>hdfsConnect("default", 0)</b> of function <b>getHdfsFS()</b> to <b>hdfsConnect({<i>your_NameNode_IP</i>}, {<i>your_NameNode_port</i>})</b> as configured in <b>$HADOOP_HOME/conf/core-site.xml</b>.</p>
+		<p>&nbsp;</p>
+		
+		<h2>Putting Large Files to HDFS</h2>
+		<p>Pregel+ requires that a large graph data is partitioned into smaller files under the same data folder, and these files are loaded by different computing processes during graph computing.</p>
+		<p>To achieve this goal, we cannot use the command <b>hadoop fs -put {local-file} {HDFS-path}</b>. Otherwise, all the data file is loaded by one computing process, and the other processes simply wait for it to finish loading.</p>
+		<p>We remark that parallel loading only speeds up data loading, and has no influence on the performance of graph computing. This is because, after all processes finish data loading, they need to exchange vertices so that each vertex reaches its process which is decided by hashing the vertex ID.</p>
+		<p>To put a large graph data onto HDFS, one needs to compile and run <a href="code/put.cpp" target="_blank">this data-putting program</a> with two arguments being <b>{local-file} {HDFS-path}</b>.</p>
 	</div>
     <!-- /.container -->
 
