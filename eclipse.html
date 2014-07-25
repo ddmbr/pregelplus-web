@@ -1,184 +1,184 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Pregel+</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
-    <style>
-    body {
-        margin-top: 60px;
-    }
-    </style>
-
-</head>
-
-<body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Pregel+</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="download.html">Download</a>
-					</li>
-					<li><a href="documentation.html">Documentation</a>
-					</li>
-					<li><a href="publications.html">Publications</a>
-					</li>
-					<li><a href="team.html">Team</a>
-					</li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
-    <div class="container">
-
-        <div class="row">
-            <div class="col-lg-12">
-                <h1>Configuring Eclipse IDE for Programming and Debugging</h1>
-            </div>
-        </div>
-        <p>&nbsp;</p>
-        <h2>Prerequisites</h2>
-		<p>We assume that a cluster is already set up as in the <a href="deploy.html", target="_blank">tutorial for Pregel+ deployment</a>. Alternatively, you may set up a single-node cluster in <a href="https://hadoop.apache.org/docs/r1.2.1/single_node_setup.html" target="_blank">pseudo-distributed mode</a>, as we will run Pregel+ programs in Eclipse on the local machine anyway. The Eclipse IDE is only used for programming, testing and debugging over a small data.</p>
-        <p>Download <a href="http://www.eclipse.org/downloads/packages/eclipse-ide-parallel-application-developers-includes-incubating-components/indigosr2" target="_blank">Eclipse IDE for Parallel Application Developers (Indigo)</a> and extract it to a location of your choice. Since Eclipse does not support MPICH3 and therefore we use <a href="http://www.open-mpi.org" target="_blank">Open MPI</a> instead. Download and extract the <a href="http://www.open-mpi.org/software/ompi/v1.6/downloads/openmpi-1.6.5.tar.gz">Open MPI package</a>, and install it under <b>/usr/local</b> as follows:</p>
-		<div class="alert alert-info">
-			<p>cd openmpi-1.6.5</p>
-			<p>./configure --prefix=/usr/local</p>
-			<p>make</p>
-			<p>sudo make install <b>[Ubuntu]</b>&nbsp;&nbsp;/&nbsp;&nbsp;su -c "make install" <b>[Fedora]</b></p>
-			<p>[type your root password]</p>
-		</div>
-		<p>After Open MPI is installed, add the following line to the end of the file <b>$HOME/.bashrc</b>, and compile it using command <b>source $HOME/.bashrc</b>.</p>
-		<div class="alert alert-warning">
-			<p>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib</p>
-		</div>
-		<p>&nbsp;</p>
-		
-		
-		<h2>Create a C++ MPI Project in Eclipse</h2>
-		<p>Start Eclipse and choose a <b>workspace</b> of your choice.</p>
-		<p>Choose <b>[File]−>[New]−>[C++ Project]</b>.</p>
-		<img src="figs/eclipse_create.png"></img>
-		<p>&nbsp;</p>
-		<p>Input a <b>project name</b> of your choice, choose <b>MPI Pi C++ Project</b> and click <b>[Finish]</b>.</p>
-		<img src="figs/eclipse_create2.png"></img>
-		<p>&nbsp;</p>
-		<p>Choose <b>[Project]−>[Build Project]</b> to compile the demo program for computing Pi.</p>
-		<img src="figs/eclipse_build.png"></img>
-		<p>&nbsp;</p>
-		<p>To run the demo program, we need to create and start a resource manager. Switch to the <b>Parallel Runtime</b> perspective.</p>
-		<img src="figs/eclipse_resource.png"></img>
-		<p>&nbsp;</p>
-		<p>Add a resource manager, choose <b>Open MPI</b> in the prompted panel and click <b>[Next]</b>. Click <b>[Finish]</b> directly in the next panel prompted.</p>
-		<img src="figs/eclipse_resource2.png"></img>
-		<p>&nbsp;</p>
-		<img src="figs/eclipse_resource3.png"></img>
-		<p>&nbsp;</p>
-		<p>Start the resource manager.</p>
-		<img src="figs/eclipse_resource4.png"></img>
-		<p>&nbsp;</p>
-		<p>If the following error is reported, add <b>localhost</b> to <b>/usr/local/etc/openmpi-default-hostfile</b> and then stop and restart the resource manager.</p>
-		<img src="figs/eclipse_resource5.png"></img>
-		<p>&nbsp;</p>
-		<p>Switch back to the <b>C/C++</b> perspective, and click <b>[Run Configurations]</b></p>
-		<img src="figs/eclipse_runpi.png"></img>
-		<p>&nbsp;</p>
-		<p>Create a new <b>Parallel Application</b> (not <b>C/C++ Application</b>), and in the <b>Resources</b> panel, set <b>Number of processes</b> as 4 to run four processes in the local machine in parallel.</p>
-		<img src="figs/eclipse_runpi2.png"></img>
-		<p>&nbsp;</p>
-		<p>In the <b>Application</b> panel, set <b>Application program</b> as the object file under the <b>Debug</b> folder just compiled. Then, click <b>[Run]</b> to run the program.</p>
-		<img src="figs/eclipse_runpi3.png"></img>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		
-        <h2>Configure the Project for Pregel+ Programming</h2>
-		<p>We now show how to run the Hash-Min algorithm for computing connected components in the Eclipse projected created above. See Section 3.2 of <a href="papers/ppa.pdf" target="_blank">our technical report</a> for the algorithm.</p>
-		<p>Download the <a href="code/system.zip">system code</a> (four directories)  and the <a href="code/apps/basic/hashmin.zip">application code of Hash-Min</a> (two files), delete the demo code under folder <b>src</b> in Eclipse and copy the downloaded files to <b>src</b>.</p>
-		<p>Now, let us take a look at <b>run.cpp</b>. It runs Hash-Min over the data under HDFS path <b>/toyFolder</b>, and the results are written under HDFS path <b>/toyOutput</b>.</p>
-		<img src="figs/eclipse_runcpp.png"></img>
-		<p>&nbsp;</p>
-		<p>To run the program, we need to put a graph data under HDFS path <b>/toyFolder</b>. Download the <a href="code/toy.txt" target="_blank">toy graph</a> described on the <a href="download.html" target="_blank">download page</a> and put it onto HDFS as follows:</p>
-		<div class="alert alert-info">
-			<p>hadoop fs -mkdir /toyFolder</p>
-			<p>hadoop fs -put toy.txt /toyFolder</p>
-			<p>(For large data, we need to use <a href="console.html" target="_blank"><b>Pregel+'s put program</b></a> instead)</p>
-		</div>
-		<p>Next, we show how to configure the project to use libhdfs.</p>
-		<p>Choose <b>[Project]−>[Properties]</b>.</p>
-		<img src="figs/eclipse_prop.png"></img>
-		<p>&nbsp;</p>
-		<p>Choose <b>[C/C++ Build]−>[Settings]</b>, then choose <b>[GCC C++ Compiler]−>[Includes]</b>, and add the following three paths to <b>Include paths (-l)</b>.</p>
-		<div class="alert alert-info">
-			<p>$HADOOP_HOME/src/c++/libhdfs</p>
-			<p>$JAVA_HOME/include</p>
-			<p>$JAVA_HOME/include/linux</p>
-			<p>(Use your absolute paths of $HADOOP_HOME and $JAVA_HOME instead of themselves)</p>
-		</div>
-		<img src="figs/eclipse_prop2.png"></img>
-		<p>&nbsp;</p>
-		<p>Choose <b>[GCC C++ Linker]−>[Libraries]</b>, and add the following path to <b>Library serch path (-L)</b>.</p>
-		<div class="alert alert-info">
-			<p><b>[For 64-bit Linux]</b> $HADOOP_HOME/c++/Linux-amd64-64/lib</p>
-			<p><b>[For 32-bit Linux]</b> $HADOOP_HOME/c++/Linux-i386-32/lib</p>
-			<p>(Use your absolute path of $HADOOP_HOME instead of $HADOOP_HOME)</p>
-		</div>
-		<img src="figs/eclipse_prop3.png"></img>
-		<p>&nbsp;</p>
-		<p>Choose <b>[GCC C++ Linker]−>[Miscellaneous]</b>, and add the following path to <b>Other objects</b>.</p>
-		[For <b>64-bit</b> Linux]
-		<div class="alert alert-info">
-			<p>$HADOOP_HOME/c++/Linux-amd64-64/lib/libhdfs.a</p>
-			<p>$JAVA_HOME/jre/lib/amd64/server/libjvm.so</p>
-			<p>(Use your absolute paths of $HADOOP_HOME and $JAVA_HOME instead of themselves)</p>
-		</div>
-		[For <b>32-bit</b> Linux]
-		<div class="alert alert-info">
-			<p>$HADOOP_HOME/c++/Linux-i386-32/lib/libhdfs.a</p>
-			<p>$JAVA_HOME/jre/lib/i386/server/libjvm.so</p>
-			<p>(Use your absolute paths of $HADOOP_HOME and $JAVA_HOME instead of themselves)</p>
-		</div>
-		<img src="figs/eclipse_prop4.png"></img>
-		<p>&nbsp;</p>
-		<p>Choose <b>[Project]−>[Build Project]</b> to build the program. We remark that Eclipse might report many errors mistakenly in the <b>Problem</b> panel due to its imperfect design, and they can be safely ignored. Only pay attention to those errors reported in the <b>Console</b> panel (if any) when building the program.</p>
-		<p>Choose <b>[Run]−>[Run Configurations]</b>. In the <b>Environment</b> panel of the previously created <b>Parallel Application</b>, click <b>[New]</b> to create a new environment <b>CLASSPATH</b>, and set its value to be that obtained from command <b>echo $CLASSPATH</b>. Finally, click <b>[run]</b> to run the program.</p>
-		<img src="figs/eclipse_env.png"></img>
-		<p>&nbsp;</p>
-		<p>Sometimes, automatic HDFS binding may fail and the program will report <b>Input path "/toyFolder" does not exist!</b> In this case, you need to edit the system program file <b>utils/ydhdfs.h</b> to hardwire the connection. Change <b>hdfsConnect("default", 0)</b> of function <b>getHdfsFS()</b> to <b>hdfsConnect({<i>your_NameNode_IP</i>}, {<i>your_NameNode_port</i>})</b> as configured in <b>$HADOOP_HOME/conf/core-site.xml</b>.</p>
-		<img src="figs/eclipse_hardwire.png"></img>
-		<p>&nbsp;</p>
-		<p>Once the configuration is done, one may simply click the button below later on to recompile and rerun the project after any code update.</p>
-		<img src="figs/eclipse_run.png"></img>
-		<p>&nbsp;</p>
-	</div>
-    <!-- /.container -->
-
-    <!-- JavaScript -->
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
-
-</body>
-
-</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pregel+</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <style>
+    body {
+        margin-top: 60px;
+    }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Pregel+</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="download.html">Download</a>
+					</li>
+					<li><a href="documentation.html">Documentation</a>
+					</li>
+					<li><a href="publications.html">Publications</a>
+					</li>
+					<li><a href="team.html">Team</a>
+					</li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Configuring Eclipse IDE for Programming and Debugging</h1>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+        <h2>Prerequisites</h2>
+		<p>We assume that a cluster is already set up as in the <a href="deploy.html", target="_blank">tutorial for Pregel+ deployment</a>. Alternatively, you may set up a single-node cluster in <a href="https://hadoop.apache.org/docs/r1.2.1/single_node_setup.html" target="_blank">pseudo-distributed mode</a>, as we will run Pregel+ programs in Eclipse on the local machine anyway. The Eclipse IDE is only used for programming, testing and debugging over a small data.</p>
+        <p>Download <a href="http://www.eclipse.org/downloads/packages/eclipse-ide-parallel-application-developers-includes-incubating-components/indigosr2" target="_blank">Eclipse IDE for Parallel Application Developers (Indigo)</a> and extract it to a location of your choice. Since Eclipse does not support MPICH3 and therefore we use <a href="http://www.open-mpi.org" target="_blank">Open MPI</a> instead. Download and extract the <a href="http://www.open-mpi.org/software/ompi/v1.6/downloads/openmpi-1.6.5.tar.gz">Open MPI package</a>, and install it under <b>/usr/local</b> as follows:</p>
+		<div class="alert alert-info">
+			<p>cd openmpi-1.6.5</p>
+			<p>./configure --prefix=/usr/local</p>
+			<p>make</p>
+			<p>sudo make install <b>[Ubuntu]</b>&nbsp;&nbsp;/&nbsp;&nbsp;su -c "make install" <b>[Fedora]</b></p>
+			<p>[type your root password]</p>
+		</div>
+		<p>After Open MPI is installed, add the following line to the end of the file <b>$HOME/.bashrc</b>, and compile it using command <b>source $HOME/.bashrc</b>.</p>
+		<div class="alert alert-warning">
+			<p>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib</p>
+		</div>
+		<p>&nbsp;</p>
+		
+		
+		<h2>Create a C++ MPI Project in Eclipse</h2>
+		<p>Start Eclipse and choose a <b>workspace</b> of your choice.</p>
+		<p>Choose <b>[File]−>[New]−>[C++ Project]</b>.</p>
+		<img src="figs/eclipse_create.png"></img>
+		<p>&nbsp;</p>
+		<p>Input a <b>project name</b> of your choice, choose <b>MPI Pi C++ Project</b> and click <b>[Finish]</b>.</p>
+		<img src="figs/eclipse_create2.png"></img>
+		<p>&nbsp;</p>
+		<p>Choose <b>[Project]−>[Build Project]</b> to compile the demo program for computing Pi.</p>
+		<img src="figs/eclipse_build.png"></img>
+		<p>&nbsp;</p>
+		<p>To run the demo program, we need to create and start a resource manager. Switch to the <b>Parallel Runtime</b> perspective.</p>
+		<img src="figs/eclipse_resource.png"></img>
+		<p>&nbsp;</p>
+		<p>Add a resource manager, choose <b>Open MPI</b> in the prompted panel and click <b>[Next]</b>. Click <b>[Finish]</b> directly in the next panel prompted.</p>
+		<img src="figs/eclipse_resource2.png"></img>
+		<p>&nbsp;</p>
+		<img src="figs/eclipse_resource3.png"></img>
+		<p>&nbsp;</p>
+		<p>Start the resource manager.</p>
+		<img src="figs/eclipse_resource4.png"></img>
+		<p>&nbsp;</p>
+		<p>If the following error is reported, add <b>localhost</b> to <b>/usr/local/etc/openmpi-default-hostfile</b> and then stop and restart the resource manager.</p>
+		<img src="figs/eclipse_resource5.png"></img>
+		<p>&nbsp;</p>
+		<p>Switch back to the <b>C/C++</b> perspective, and click <b>[Run Configurations]</b></p>
+		<img src="figs/eclipse_runpi.png"></img>
+		<p>&nbsp;</p>
+		<p>Create a new <b>Parallel Application</b> (not <b>C/C++ Application</b>), and in the <b>Resources</b> panel, set <b>Number of processes</b> as 4 to run four processes in the local machine in parallel.</p>
+		<img src="figs/eclipse_runpi2.png"></img>
+		<p>&nbsp;</p>
+		<p>In the <b>Application</b> panel, set <b>Application program</b> as the object file under the <b>Debug</b> folder just compiled. Then, click <b>[Run]</b> to run the program.</p>
+		<img src="figs/eclipse_runpi3.png"></img>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		
+        <h2>Configure the Project for Pregel+ Programming</h2>
+		<p>We now show how to run the Hash-Min algorithm for computing connected components in the Eclipse projected created above. See Section 3.2 of <a href="papers/ppa.pdf" target="_blank">our technical report</a> for the algorithm.</p>
+		<p>Download the <a href="code/system.zip">system code</a> (four directories)  and the <a href="code/apps/basic/hashmin.zip">application code of Hash-Min</a> (two files), delete the demo code under folder <b>src</b> in Eclipse and copy the downloaded files to <b>src</b>.</p>
+		<p>Now, let us take a look at <b>run.cpp</b>. It runs Hash-Min over the data under HDFS path <b>/toyFolder</b>, and the results are written under HDFS path <b>/toyOutput</b>.</p>
+		<img src="figs/eclipse_runcpp.png"></img>
+		<p>&nbsp;</p>
+		<p>To run the program, we need to put a graph data under HDFS path <b>/toyFolder</b>. Download the <a href="code/toy.txt" target="_blank">toy graph</a> described on the <a href="download.html" target="_blank">download page</a> and put it onto HDFS as follows:</p>
+		<div class="alert alert-info">
+			<p>hadoop fs -mkdir /toyFolder</p>
+			<p>hadoop fs -put toy.txt /toyFolder</p>
+			<p>(For large data, we need to use <a href="console.html" target="_blank"><b>Pregel+'s put program</b></a> instead)</p>
+		</div>
+		<p>Next, we show how to configure the project to use libhdfs.</p>
+		<p>Choose <b>[Project]−>[Properties]</b>.</p>
+		<img src="figs/eclipse_prop.png"></img>
+		<p>&nbsp;</p>
+		<p>Choose <b>[C/C++ Build]−>[Settings]</b>, then choose <b>[GCC C++ Compiler]−>[Includes]</b>, and add the following three paths to <b>Include paths (-l)</b>.</p>
+		<div class="alert alert-info">
+			<p>$HADOOP_HOME/src/c++/libhdfs</p>
+			<p>$JAVA_HOME/include</p>
+			<p>$JAVA_HOME/include/linux</p>
+			<p>(Use your absolute paths of $HADOOP_HOME and $JAVA_HOME instead of themselves)</p>
+		</div>
+		<img src="figs/eclipse_prop2.png"></img>
+		<p>&nbsp;</p>
+		<p>Choose <b>[GCC C++ Linker]−>[Libraries]</b>, and add the following path to <b>Library serch path (-L)</b>.</p>
+		<div class="alert alert-info">
+			<p><b>[For 64-bit Linux]</b> $HADOOP_HOME/c++/Linux-amd64-64/lib</p>
+			<p><b>[For 32-bit Linux]</b> $HADOOP_HOME/c++/Linux-i386-32/lib</p>
+			<p>(Use your absolute path of $HADOOP_HOME instead of $HADOOP_HOME)</p>
+		</div>
+		<img src="figs/eclipse_prop3.png"></img>
+		<p>&nbsp;</p>
+		<p>Choose <b>[GCC C++ Linker]−>[Miscellaneous]</b>, and add the following path to <b>Other objects</b>.</p>
+		[For <b>64-bit</b> Linux]
+		<div class="alert alert-info">
+			<p>$HADOOP_HOME/c++/Linux-amd64-64/lib/libhdfs.a</p>
+			<p>$JAVA_HOME/jre/lib/amd64/server/libjvm.so</p>
+			<p>(Use your absolute paths of $HADOOP_HOME and $JAVA_HOME instead of themselves)</p>
+		</div>
+		[For <b>32-bit</b> Linux]
+		<div class="alert alert-info">
+			<p>$HADOOP_HOME/c++/Linux-i386-32/lib/libhdfs.a</p>
+			<p>$JAVA_HOME/jre/lib/i386/server/libjvm.so</p>
+			<p>(Use your absolute paths of $HADOOP_HOME and $JAVA_HOME instead of themselves)</p>
+		</div>
+		<img src="figs/eclipse_prop4.png"></img>
+		<p>&nbsp;</p>
+		<p>Choose <b>[Project]−>[Build Project]</b> to build the program. We remark that Eclipse might report many errors mistakenly in the <b>Problem</b> panel due to its imperfect design, and they can be safely ignored. Only pay attention to those errors reported in the <b>Console</b> panel (if any) when building the program.</p>
+		<p>Choose <b>[Run]−>[Run Configurations]</b>. In the <b>Environment</b> panel of the previously created <b>Parallel Application</b>, click <b>[New]</b> to create a new environment <b>CLASSPATH</b>, and set its value to be that obtained from command <b>echo $CLASSPATH</b>. Finally, click <b>[run]</b> to run the program.</p>
+		<img src="figs/eclipse_env.png"></img>
+		<p>&nbsp;</p>
+		<p>Sometimes, automatic HDFS binding may fail and the program will report <b>Input path "/toyFolder" does not exist!</b> In this case, you need to edit the system program file <b>utils/ydhdfs.h</b> to hardwire the connection. Change <b>hdfsConnect("default", 0)</b> of function <b>getHdfsFS()</b> to <b>hdfsConnect({<i>your_NameNode_IP</i>}, {<i>your_NameNode_port</i>})</b> as configured in <b>$HADOOP_HOME/conf/core-site.xml</b>.</p>
+		<img src="figs/eclipse_hardwire.png"></img>
+		<p>&nbsp;</p>
+		<p>Once the configuration is done, one may simply click the button below later on to recompile and rerun the project after any code update.</p>
+		<img src="figs/eclipse_run.png"></img>
+		<p>&nbsp;</p>
+	</div>
+    <!-- /.container -->
+
+    <!-- JavaScript -->
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+</body>
+
+</html>
