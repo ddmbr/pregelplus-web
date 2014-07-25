@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pregel+</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <style>
+    body {
+        margin-top: 60px;
+    }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Pregel+</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="download.html">Download</a>
+					</li>
+					<li><a href="documentation.html">Documentation</a>
+					</li>
+					<li><a href="publications.html">Publications</a>
+					</li>
+					<li><a href="team.html">Team</a>
+					</li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Pregel+ Architecture Overview</h1>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+        <div align="center"><img src="figs/arch.png" width="640px"></img></div>
+		<p>&nbsp;</p>
+		<h2>Pregel+ Architecture</h2>				<p>A diagram of the architecture of Pregel+ is shown in the above figure. Pregel+ is implemented in C/C++ as a group of header files, and users only need to include the necessary base classes and implement the application logic in their subclasses. A Pregel+ application program is compiled using GCC, preferably with -O2 option enabled. Click <a href="console.html">here</a> to see how to run a Pregel+ program in your cluster.</p>				<p>Pregel+ communicates with HDFS (e.g. for graph loading and result dumping) through <a href="http://hadoop.apache.org/docs/r1.2.1/libhdfs.html" target="_blank">libhdfs</a>, a JNI based C API for HDFS. Each computing unit (or, worker) of Pregel+ is simply an MPI process and communications are implemented using MPI communication primitives. One may deploy Pregel+ with any Hadoop and MPI version, such as Hadoop 1.2.1 and MPICH 3.0.4.</p>				<p>Unlike Pregel, Pregel+ also makes the master a worker, and the task of fault recovery can be implemented by a script as follows. The script loops a Pregel+ job, which runs for at most Δ supersteps before dumping the intermediate results to HDFS. Meanwhile, the script also monitors the cluster condition. If a machine is down, the script kills the current job and restarts another job loading the latest intermediate results from HDFS. Fault tolerance is achieved by the data replication in HDFS.</p>		<p>&nbsp;</p>		<h2>User-Defined Classes</h2>				<p>A diagram of the architecture of Pregel+ is shown in the above figure. Pregel+ is implemented in C/C++ as a group of header files, and users only need to include the necessary base classes and implement the application logic in their subclasses. A Pregel+ application program is compiled using GCC, preferably with -O2 option enabled.</p>		
+	</div>
+    <!-- /.container -->
+
+    <!-- JavaScript -->
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+</body>
+
+</html>
