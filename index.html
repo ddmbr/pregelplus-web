@@ -67,90 +67,62 @@
 		<div class="row">
             <div class="col-lg-12">
                 <h3>Performance Highligts</h3>
-				<p>●&nbsp;&nbsp;Running <a href="http://arxiv.org/pdf/1203.5387.pdf" target="_blank">Hash-Min</a>, an algorithm for computing connected components of a small-diameter graph, over the <a href="http://km.aifb.kit.edu/projects/btc-2009/" target="_blank">BTC dataset</a> in a cluster with 1 master machine and 15 slave machines each running 1 worker.</p>
+				<p>●&nbsp;&nbsp;Running <a href="http://arxiv.org/pdf/1203.5387.pdf" target="_blank">Hash-Min</a>, an algorithm for computing connected components of a small-diameter graph, over the <a href="http://km.aifb.kit.edu/projects/btc-2009/" target="_blank">BTC dataset</a> in a cluster with 1 master machine and 15 slave machines each running 8 workers (here, "workers" refer to "processes" for Pregel+ and GPS, and "threads" for GraphLab and Giraph).</p>
+
 				<table border="1">
 					<tr>
-						<td width="200" align="center">
+						<td width="100" align="center">
 							<b>Pregel+</b>
 						</td>
-						<td width="200" align="center">
-							<b>Giraph</b>
-						</td>
-						<td width="200" align="center">
-							<b>GraphLab</b>
-						</td>
-					</tr>
-					<tr>
-						<td width="200" align="center">
-							49 seconds
-						</td>
-						<td width="200" align="center">
-							261 seconds
-						</td>
-						<td width="200" align="center">
-							408 seconds
-						</td>
-					</tr>
-				</table>
-				<p>&nbsp;</p>
-				<p>●&nbsp;&nbsp;Running Hash-Min over the BTC dataset in a cluster with 1 master machine and 15 slave machines each running 8 workers.</p>
-				<table border="1">
-					<tr>
-						<td width="200" align="center">
-							<b>Pregel+</b>
-						</td>
-						<td width="200" align="center">
+						<td width="190" align="center">
 							<b>Pregel+ with Mirroring</b>
 						</td>
-						<td width="200" align="center">
+						<td width="100" align="center">
 							<b>Giraph</b>
 						</td>
-						<td width="200" align="center">
-							<b>GraphLab</b>
-						</td>
+						<td width="140" align="center">
+							<b>GraphLab Sync</b>
+						</td>												<td width="140" align="center">							<b>GraphLab ASync</b>						</td>												<td width="100" align="center">							<b>GPS</b>						</td>												<td width="100" align="center">							<b>GPS LALP</b>						</td>
 					</tr>
 					<tr>
-						<td width="200" align="center">
+						<td align="center">
 							27 seconds
 						</td>
-						<td width="200" align="center">
-							10 seconds
+						<td align="center">
+							<font color="red"><i>10 seconds*</i></font>
 						</td>
-						<td width="200" align="center">
-							Out-of-memory
+						<td align="center">
+							93 seconds
 						</td>
-						<td width="200" align="center">
-							159 seconds
-						</td>
+						<td align="center">
+							83 seconds
+						</td>												<td align="center">							155 seconds						</td>												<td align="center">							38 seconds						</td>												<td align="center">							33 seconds						</td>
 					</tr>
 				</table>
 				<p>&nbsp;</p>
 				<img width="800" src="figs/msgNum_btc.jpg"></img>
 				<p>(Number of messages sent by each worker using Pregel+, blue bars — ordinary mode, red bars — mirroring)</p>
 				<p>&nbsp;</p>
-				<p>●&nbsp;&nbsp;Running <a href="papers/ppa.pdf">S-V</a>, an algorithm for computing connected components of a large-diameter graph, over the <a href="http://www.dis.uniroma1.it/challenge9/download.shtml">USA road network</a> in a cluster with 1 master machine and 15 slave machines each running 4 workes.</p>
+				<p>●&nbsp;&nbsp;Running <a href="papers/ppa.pdf">S-V</a>, an algorithm for computing connected components of a large-diameter graph, over the <a href="http://www.dis.uniroma1.it/challenge9/download.shtml">USA road network</a> in a cluster with 1 master machine and 15 slave machines each running 4 workes. GraphLab is inapplicable since it does not support vertex communication with a non-neighbor, which is required by S-V.</p>
 				<table border="1">
 					<tr>
-						<td width="200" align="center">
+						<td width="100" align="center">
 							<b>Pregel+</b>
 						</td>
-						<td width="400" align="center">
+						<td width="320" align="center">
 							<b>Pregel+ with Request-Respond Paradigm</b>
-						</td>
-						<td width="200" align="center">
-							<b>Giraph</b>
-						</td>
+						</td>												<td width="100" align="center">							<b>Giraph</b>						</td>						<td width="100" align="center">							<b>GraphLab</b>						</td>												<td width="100" align="center">							<b>GPS</b>						</td>
 					</tr>
 					<tr>
-						<td width="200" align="center">
-							261 seconds
+						<td align="center">
+							262 seconds
 						</td>
-						<td width="400" align="center">
-							138 seconds
+						<td align="center">
+							<font color="red"><i>138 seconds*</i></font>
 						</td>
-						<td width="200" align="center">
-							559 seconds
-						</td>
+						<td align="center">
+							690 seconds
+						</td>												<td align="center">							inapplicable						</td>												<td align="center">							190 seconds						</td>
 					</tr>
 				</table>
 				<p>&nbsp;</p>
