@@ -1,69 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Pregel+</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
-    <style>
-    body {
-        margin-top: 60px;
-    }
-    </style>
-	<script src="artDialog/artDialog.js?skin=black"></script>		<script>			(function (config) {  			config['lock'] = true;  			config['fixed'] = true;  			config['okVal'] = 'CLOSE';			// [more..]  		})(art.dialog.defaults);		var vdel_note = '<p><b>[NOTE]</b> <i><u>We use \"Implementation Note\" to discuss system implementaion details, which is of interest to people who want to change/extend the system; you may skip it if you are only interested in using the system to implement application code.</u></i></p>\		<p>Here, we briefly explain where the system deletes vertices, using the basic mode for illustration. Consider the <i>Worker</i> class in \"basic/Worker.h\", and consider the function <i>Worker::sync_graph()</i>. During data loading, each worker process reads a fraction of the input and converts the lines to vertices. However, a vertex <i>v</i> loaded by a worker <i>w<sub>i</sub></i> may have <i>hash(v) = w<sub>j</sub></i>, and thus, <i>w<sub>i</sub></i> needs to send <i>v</i> to <i>w<sub>j</sub></i> before graph computing. In other words, workers need to exchange vertices to ensure that they hold the vertices that they are responsible for. This is done by <i>Worker::sync_graph()</i>, where vertex exchange is done by the <i>all_to_all()</i> function (defined in \"utils/communication.h\") and vertices directed at other workers are deleted after being sent. Please check the function code for the details.</p>\		<p>The second place where the system deletes vertices is in the destructor of the <i>Worker</i> class. Please check the function code for the details.';		var vload_note = '<p>Here, we briefly explain how the system calls <i>Worker::toVertex(line)</i> to load the vertices. In HDFS, a graph is stored as a folder of files, where each file contains many lines each representing a vertex. During graph loading, the master will assign the files evenly to the workers, and each worker calls <i>Worker::load_graph(inpath)</i> (see \"basic/Worker.h\") for each file assigned. In <i>Worker::load_graph(inpath)</i>, the user-defined <i>toVertex(line)</i> function is called for each line of the file to parse it into a vertex object, which is appended to the worker\'s vertex set <i>Worker::vertexes</i>.</p>'		var vdump_note = '<p>Here, we briefly explain how the system calls <i>Worker::toline(v, writer)</i> to dump the vertices to HDFS. The result of a Pregel+ job is written to a user-specified output folder in HDFS, where each worker process calls <i>toline(v, writer)</i> for each vertex <i>v</i> it is responsible for, and writes the information of <i>v</i> to a file under the output folder. This is done by function <i>Worker::dump_partition(outpath)</i>. Worker <i>i</i> writes to files \"part_i_j\", where <i>j</i> = 1, 2, ... In \"utils/ydhdfs.h\", we define \"HDFS_BLOCK_SIZE\" to be 8M, and if the current file worker <i>i</i> is writing (let it be \"part_i_j\") has size exceeding \"HDFS_BLOCK_SIZE\", worker <i>i</i> creates a new file (i.e. \"part_i_(j+1)\") to write vertex information. The file splitting is automatically handled by class <i>BufferedWriter</i> defined in \"utils/ydhdfs.h\".</p>'		var combiner_note = '<p>The <i>Combiner</i> class is defined in \"utils/Combiner.h\", and the mentioned system-level message combining operation is implemented in <i>Vecs::combiner()</i> of \"utils/vecs.h\", which is called by the message buffer\'s <i>MessageBuffer::combine()</i> function defined in \"basic/MessageBuffer.h\".</p>\		<p>To achieve better performance, the actual implementation is actually a little bit different from the logic described. When vertices send messages, the messages are simply appended to the end of the message buffer; before being sent, the messages are sorted by the target vertex ID to form groups, and messages in each group are combined into one message using the specified combining function.</p>'		</script>
-</head>
-
-<body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Pregel+</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="download.html">Download</a>
-					</li>
-					<li><a href="documentation.html">Documentation</a>
-					</li>
-					<li><a href="publications.html">Publications</a>
-					</li>
-					<li><a href="team.html">Team</a>
-					</li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1>Pregel+ Communication Primitives</h1>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pregel+</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <style>
+    body {
+        margin-top: 60px;
+    }
+    </style>
+	<script src="artDialog/artDialog.js?skin=black"></script>		<script>			(function (config) {  			config['lock'] = true;  			config['fixed'] = true;  			config['okVal'] = 'CLOSE';			// [more..]  		})(art.dialog.defaults);		var vdel_note = '<p><b>[NOTE]</b> <i><u>We use \"Implementation Note\" to discuss system implementaion details, which is of interest to people who want to change/extend the system; you may skip it if you are only interested in using the system to implement application code.</u></i></p>\		<p>Here, we briefly explain where the system deletes vertices, using the basic mode for illustration. Consider the <i>Worker</i> class in \"basic/Worker.h\", and consider the function <i>Worker::sync_graph()</i>. During data loading, each worker process reads a fraction of the input and converts the lines to vertices. However, a vertex <i>v</i> loaded by a worker <i>w<sub>i</sub></i> may have <i>hash(v) = w<sub>j</sub></i>, and thus, <i>w<sub>i</sub></i> needs to send <i>v</i> to <i>w<sub>j</sub></i> before graph computing. In other words, workers need to exchange vertices to ensure that they hold the vertices that they are responsible for. This is done by <i>Worker::sync_graph()</i>, where vertex exchange is done by the <i>all_to_all()</i> function (defined in \"utils/communication.h\") and vertices directed at other workers are deleted after being sent. Please check the function code for the details.</p>\		<p>The second place where the system deletes vertices is in the destructor of the <i>Worker</i> class. Please check the function code for the details.';		var vload_note = '<p>Here, we briefly explain how the system calls <i>Worker::toVertex(line)</i> to load the vertices. In HDFS, a graph is stored as a folder of files, where each file contains many lines each representing a vertex. During graph loading, the master will assign the files evenly to the workers, and each worker calls <i>Worker::load_graph(inpath)</i> (see \"basic/Worker.h\") for each file assigned. In <i>Worker::load_graph(inpath)</i>, the user-defined <i>toVertex(line)</i> function is called for each line of the file to parse it into a vertex object, which is appended to the worker\'s vertex set <i>Worker::vertexes</i>.</p>'		var vdump_note = '<p>Here, we briefly explain how the system calls <i>Worker::toline(v, writer)</i> to dump the vertices to HDFS. The result of a Pregel+ job is written to a user-specified output folder in HDFS, where each worker process calls <i>toline(v, writer)</i> for each vertex <i>v</i> it is responsible for, and writes the information of <i>v</i> to a file under the output folder. This is done by function <i>Worker::dump_partition(outpath)</i>. Worker <i>i</i> writes to files \"part_i_j\", where <i>j</i> = 1, 2, ... In \"utils/ydhdfs.h\", we define \"HDFS_BLOCK_SIZE\" to be 8M, and if the current file worker <i>i</i> is writing (let it be \"part_i_j\") has size exceeding \"HDFS_BLOCK_SIZE\", worker <i>i</i> creates a new file (i.e. \"part_i_(j+1)\") to write vertex information. The file splitting is automatically handled by class <i>BufferedWriter</i> defined in \"utils/ydhdfs.h\".</p>'		var combiner_note = '<p>The <i>Combiner</i> class is defined in \"utils/Combiner.h\", and the mentioned system-level message combining operation is implemented in <i>Vecs::combiner()</i> of \"utils/vecs.h\", which is called by the message buffer\'s <i>MessageBuffer::combine()</i> function defined in \"basic/MessageBuffer.h\".</p>\		<p>To achieve better performance, the actual implementation is actually a little bit different from the logic described. When vertices send messages, the messages are simply appended to the end of the message buffer; before being sent, the messages are sorted by the target vertex ID to form groups, and messages in each group are combined into one message using the specified combining function.</p>'		</script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Pregel+</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="download.html">Download</a>
+					</li>
+					<li><a href="documentation.html">Documentation</a>
+					</li>
+					<li><a href="publications.html">Publications</a>
+					</li>
+					<li><a href="team.html">Team</a>
+					</li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Pregel+ Communication Primitives</h1>
+            </div>
         </div>		<p>All the communication primitives of our system are defined in <b>utils/communication.h</b>. These functions are implemented using MPI, and are called by the system (e.g., in worker's <b>run()</b> function). If you want to change/extend the logic of our system, you may also need to call these functions.</p>				<p>The first set of functions aggregate the value of each worker, and returns the aggregated value.</p>				<div class="alert alert-info">			<p><b>Every worker calls: </b>int all_sum(int my_copy)</p>					<p><b>Every worker calls: </b>long long master_sum_LL(long long my_copy)</p>						<p><b>Every worker calls: </b>long long all_sum_LL(long long my_copy)</p>						<p><b>Every worker calls: </b>all_bor(char my_copy)</p>					</div>				<p>For example, in function <b>Worker::run()</b> of <b>basic/Worker.h</b>, evey worker executes <b>active_vnum() = all_sum(active_count)</b> to sum up the number of active vertices (i.e. <b>active_count</b>) local to the worker, and to obtain the total number of active vertices (i.e. the return value of <b>all_sum(.)</b>). This value is then used to decide the termination condition. For <b>master_sum_LL(.)</b>, the return value is only valid for the master process.</p>				<p>The second set of functions are called by the workers to exchange contents:</p>				<div class="alert alert-info">			<p><b>Every worker calls: </b>all_to_all(vector<T>& to_exchange)</p>					<p><b>Every worker calls: </b>all_to_all(vector<T>& to_send, vector<T1>& to_get)</p>					</div>				<p>Before calling the first function, one should make sure that <b>to_exchange</b> contains <b>N</b> elements of type <b>T</b> (<b>N</b> is the number of workers), where <b>to_exchange[i]</b> stores the object to be sent to worker <b>i</b>. After the function returns, <b>to_exchange[i]</b> stores the object received from worker <b>i</b>.</p>				<p>The second function is similar, except that the contents to send are stored in <b>to_send</b>, and the contents received are stored in <b>to_get</b>. However, for worker <b>i</b>, <b>to_get[i]</b> is empty and one needs to get the content from <b>to_send[i]</b>. If <b>T</b> is different from <b>T1</b>, we require that the serial representation of a <b>T</b>-typed object be the same as that of a <b>T1</b>-typed object (e.g., <b>vector<T></b> and <b>hash_set<T></b> have the same serial representation according to <b>utils/serialization.h</b>).</p>				<p>These functions are used by the system to implement the message passing logic, see <b>basic/MessageBuffer.h</b> for more details.</p>				<p>The final set of functions are called between master and the slaves to gather/scatter information:</p>				<div class="alert alert-info">			<p><b>Master calls:</b> masterScatter(vector&lt;T&gt;& to_send);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Slave calls:</b> slaveScatter(T& to_get)</p>						<p><b>Master calls:</b> masterBcast(T& to_send);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Slave calls:</b> slaveBcast(T& to_get)</p>						<p><b>Master calls:</b> masterGather(vector&lt;T&gt;& to_get);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Slave calls:</b> slaveGather(T& to_send)</p>					</div>				<p>The first pair of functions are called to let the master distribute contents to each worker. For the master, before calling <b>masterScatter(.)</b>, <b>to_send[i]</b> stores the object to be sent to worker <b>i</b>. For each slave, after calling <b>slaveScatter(.)</b>, <b>to_get</b> stores the object received from the master.</p>				<p>The second pair of functions are similar, except that the master sends the same content <b>to_send</b> to all slaves.</p>				<p>The third pair of functions are called to let the master gather contents from each worker. For each slave, before calling <b>slaveGather(.)</b>, <b>to_send</b> stores the object to be sent to the master. For the master, after calling <b>masterGather(.)</b>, <b>to_get[i]</b> stores the object received from worker <b>i</b>.</p>				<p>These functions are used by the system to implement the aggregator logic, see <b>Worker::agg_sync()</b> in <b>basic/Worker.h</b> for more details.</p>		
-	</div>
-    <!-- /.container -->
-    <!-- JavaScript -->
+	</div>
+    <!-- /.container -->
+    <!-- JavaScript -->
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-53484769-1', 'auto');ga('send', 'pageview');</script>
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
-</body>
-</html>
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.js"></script>
+</body>
+</html>

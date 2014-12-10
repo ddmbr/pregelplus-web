@@ -1,135 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Pregel+</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
-    <style>
-    body {
-        margin-top: 60px;
-    }
-    </style>
-
-</head>
-
-<body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Pregel+</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="download.html">Download</a>
-					</li>
-					<li><a href="documentation.html">Documentation</a>
-					</li>
-					<li><a href="publications.html">Publications</a>
-					</li>
-					<li><a href="team.html">Team</a>
-					</li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
-    <div class="container">
-
-        <div class="row">
-            <div class="col-lg-12">
-                <h1>Compiling and Running Pregel+ Programs from the Console</h1>
-            </div>
-        </div>
-        <p>&nbsp;</p>
-		<p>We assume that a cluster is already set up as in the <a href="deploy.html", target="_blank">tutorial for Pregel+ deployment</a>.</p>
-		<p>We now show how to run the Hash-Min algorithm for computing connected components from the console. See Section 3.2 of <a href="papers/ppa.pdf" target="_blank">our technical report</a> for the algorithm.</p>
-		<p>Download the <a href="code/system.zip">system code</a> (four directories)  and extract to a location of your choice, such as <b>$HOME/pregelplus</b>. This is the root directory of our system code.</p>
-		<p>Download the <a href="code/apps/basic/hashmin.zip">application code of Hash-Min</a> (two files) and extract to a location of your choice, such as <b>$HOME/hashmin</b>. This is the directory for the Hash-Min application.</p>
-		<p>Now, let us take a look at <b>$HOME/hashmin/run.cpp</b>. It runs Hash-Min over the data under HDFS path <b>/toyFolder</b>, and the results are written under HDFS path <b>/toyOutput</b>.</p>
-		<p>To run the program, we need to put a graph data under HDFS path <b>/toyFolder</b>. Download the <a href="code/toy.txt" target="_blank">toy graph</a> described on the <a href="download.html" target="_blank">download page</a> and put it onto HDFS as follows:</p>
-		<div class="alert alert-info">
-			<p>hadoop fs -mkdir /toyFolder</p>
-			<p>hadoop fs -put toy.txt /toyFolder</p>
-			<p>(For large data, we need to use <b>Pregel+'s put program</b> instead, which will be introduced shortly.)</p>
-		</div>
-		<p>&nbsp;</p>
-		
-        <h2>Compilation</h2>
-		<p>In the application directory, we need to write a makefile that refers to the libraries of (1)HDFS and (2)the Pregel+ system.</p>
-		<p>Download the <a href="code/Makefile" target="_blank">makefile sample</a> and put it under the application directory <b>$HOME/hashmin</b>.</p>
-		<p>In the sample makefile, the places surrounded by brackets need to be specified.</p>
-		<p>Specifically, if you are using a 64-bit (or respectively, 32-bit) Linux, replace Lines 2 to 4 with <b>PLATFORM=Linux-amd64-64</b> (or respectively, <b>PLATFORM=Linux-i386-32</b>).</p>
-		<p>Also replace <b>[Input the path for system code directory]</b> with the system code directory, which is <b>$HOME/pregelplus</b> in our case.</p>
-		<p>Then, use the command <b>make</b> to compile the source code to the binary file <b>run</b>.</p>
-		<p>&nbsp;</p>
-		
-		<h2>Process-to-Machine Mapping</h2>
-		<p>Suppose that the cluster contains one master machine and <i>N</i> slave machines where the <i>i</i>-th slave has hostname "slave(<i>i</i>+1)". We need to prepare a configuration file to specify how many computing process are to be run on each machine.</p>
-		<p>For example, let us create a file <b>conf</b> under <b>$HOME/hashmin</b> with the following content:</p>
-		<div class="alert alert-warning">
-			<p>master:1</p>
-			<p>slave1:4</p>
-			<p>slave2:4</p>
-			<p>......</p>
-			<p>slave<i>N</i>:4</p>
-		</div>
-		<p>This file states that the master machine runs only one process (i.e., Process 0 which is the master process), while each slave runs 4 processes. </p>
-		<p>&nbsp;</p>
-		
-		<h2>Program Distribution</h2>
-		<p>Now that the binary file of Hash-Min only exists on the master, it is necessary to distribute the file to all the slave machines, under the same path <b>$HOME/hashmin</b>. For each slave slave<i>i</i>, run the following command:</p>
-		<div class="alert alert-info">
-			<p>[Make sure directory $HOME/hashmin is already created on each slave]</p>
-			<p>scp $HOME/hashmin/run {username}@slave<i>i</i>:$HOME/hashmin</p>
-		</div>
-		<p>Alternatively, one may use a shell script like <a href="code/distribute.sh" target="_blank">this one</a> for program distribution, using command <b>./distribute.sh $HOME/hashmin/run <i>N</i></b>.</p>
-		<p>&nbsp;</p>
-		
-		<h2>Running the Program</h2>
-		<p>Finally, use the following command to run the compiled program:</p>
-		<div class="alert alert-info">
-			<p>mpiexec -n number-of-processes -f process-to-machine-mapping-file compiled-binary-file other-arguments</p>
-		</div>
-		<p>In our case, we run Hash-Min as follows:</p>
-		<div class="alert alert-info">
-			<p>mpiexec -n <i>N</i> -f $HOME/hashmin/conf $HOME/hashmin/run</p>
-		</div>
-		<p>Sometimes, automatic HDFS binding may fail and the program will report <b>Input path "/toyFolder" does not exist!</b> In this case, you need to edit the system program file <b>utils/ydhdfs.h</b> to hardwire the connection. Change <b>hdfsConnect("default", 0)</b> of function <b>getHdfsFS()</b> to <b>hdfsConnect({<i>your_NameNode_IP</i>}, {<i>your_NameNode_port</i>})</b> as configured in <b>$HADOOP_HOME/conf/core-site.xml</b>.</p>
-		<p>&nbsp;</p>
-		
-		<h2>Putting Large Files to HDFS</h2>
-		<p>Pregel+ requires that a large graph data is partitioned into smaller files under the same data folder, and these files are loaded by different computing processes during graph computing.</p>
-		<p>To achieve this goal, we cannot use the command <b>hadoop fs -put {local-file} {HDFS-path}</b>. Otherwise, all the data file is loaded by one computing process, and the other processes simply wait for it to finish loading.</p>
-		<p>We remark that parallel loading only speeds up data loading, and has no influence on the performance of graph computing. This is because, after all processes finish data loading, they need to exchange vertices so that each vertex reaches its process which is decided by hashing the vertex ID.</p>
-		<p>To put a large graph data onto HDFS, one needs to compile and run <a href="code/put.cpp" target="_blank">this data-putting program</a> with two arguments being <b>{local-file} {HDFS-path}</b>.</p>
-	</div>
-    <!-- /.container -->
-
-    <!-- JavaScript -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Pregel+</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <style>
+    body {
+        margin-top: 60px;
+    }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Pregel+</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="download.html">Download</a>
+					</li>
+					<li><a href="documentation.html">Documentation</a>
+					</li>
+					<li><a href="publications.html">Publications</a>
+					</li>
+					<li><a href="team.html">Team</a>
+					</li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Compiling and Running Pregel+ Programs from the Console</h1>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+		<p>We assume that a cluster is already set up as in the tutorial for Pregel+ deployment(<a
+        href="deploy-hadoop1.html", target="_blank">Hadoop 1.x</a>/<a
+        href="deploy-hadoop2.html", target="_blank">Hadoop 2.x</a>).</p>
+		<p>We now show how to run the Hash-Min algorithm for computing connected components from the console. See Section 3.2 of <a href="papers/ppa.pdf" target="_blank">our technical report</a> for the algorithm.</p>
+		<p>Download the system code(<a href="code/hadoop1/system.zip">for Hadoop1.x</a>/<a href="code/hadoop2/system.zip">for Hadoop2.x</a>) and extract to a location of your choice, such as <b>$HOME/pregelplus</b>. This is the root directory of our system code.</p>
+		<p>Download the <a href="code/apps/basic/hashmin.zip">application code of Hash-Min</a> (two files) and extract to a location of your choice, such as <b>$HOME/hashmin</b>. This is the directory for the Hash-Min application.</p>
+		<p>Now, let us take a look at <b>$HOME/hashmin/run.cpp</b>. It runs Hash-Min over the data under HDFS path <b>/toyFolder</b>, and the results are written under HDFS path <b>/toyOutput</b>.</p>
+		<p>To run the program, we need to put a graph data under HDFS path <b>/toyFolder</b>. Download the <a href="code/toy.txt" target="_blank">toy graph</a> described on the <a href="download.html" target="_blank">download page</a> and put it onto HDFS as follows:</p>
+		<div class="alert alert-info">
+			<p>hadoop fs -mkdir /toyFolder</p>
+			<p>hadoop fs -put toy.txt /toyFolder</p>
+			<p>(For large data, we need to use <b>Pregel+'s put program</b> instead, which will be introduced shortly.)</p>
+		</div>
+		<p>&nbsp;</p>
+		
+        <h2>Compilation</h2>
+		<p>In the application directory, we need to write a makefile that refers to the libraries of (1)HDFS and (2)the Pregel+ system.</p>
+		<p>Download the makefile sample(<a href="code/hadoop1/Makefile" target="_blank">for Hadoop1.x</a>/<a
+        href="code/hadoop2/Makefile" target="_blank">for Hadoop2.x</a>) and put it under the application directory <b>$HOME/hashmin</b>.</p>
+		<p>In the sample makefile, the places surrounded by brackets need to be specified.</p>
+		<p>Specifically, if you are using a 64-bit (or respectively, 32-bit) Linux, replace Lines 2 to 4 with <b>PLATFORM=Linux-amd64-64</b> (or respectively, <b>PLATFORM=Linux-i386-32</b>).</p>
+		<p>Also replace <b>[Input the path for system code directory]</b> with the system code directory, which is <b>$HOME/pregelplus</b> in our case.</p>
+		<p>Then, use the command <b>make</b> to compile the source code to the binary file <b>run</b>.</p>
+		<p>&nbsp;</p>
+		
+		<h2>Process-to-Machine Mapping</h2>
+		<p>Suppose that the cluster contains one master machine and <i>N</i> slave machines where the <i>i</i>-th slave has hostname "slave(<i>i</i>+1)". We need to prepare a configuration file to specify how many computing process are to be run on each machine.</p>
+		<p>For example, let us create a file <b>conf</b> under <b>$HOME/hashmin</b> with the following content:</p>
+		<div class="alert alert-warning">
+			<p>master:1</p>
+			<p>slave1:4</p>
+			<p>slave2:4</p>
+			<p>......</p>
+			<p>slave<i>N</i>:4</p>
+		</div>
+		<p>This file states that the master machine runs only one process (i.e., Process 0 which is the master process), while each slave runs 4 processes. </p>
+		<p>&nbsp;</p>
+		
+		<h2>Program Distribution</h2>
+		<p>Now that the binary file of Hash-Min only exists on the master, it is necessary to distribute the file to all the slave machines, under the same path <b>$HOME/hashmin</b>. For each slave slave<i>i</i>, run the following command:</p>
+		<div class="alert alert-info">
+			<p>[Make sure directory $HOME/hashmin is already created on each slave]</p>
+			<p>scp $HOME/hashmin/run {username}@slave<i>i</i>:$HOME/hashmin</p>
+		</div>
+		<p>Alternatively, one may use a shell script like <a href="code/distribute.sh" target="_blank">this one</a> for program distribution, using command <b>./distribute.sh $HOME/hashmin/run <i>N</i></b>.</p>
+		<p>&nbsp;</p>
+		
+		<h2>Running the Program</h2>
+		<p>Finally, use the following command to run the compiled program:</p>
+		<div class="alert alert-info">
+			<p>mpiexec -n number-of-processes -f process-to-machine-mapping-file compiled-binary-file other-arguments</p>
+		</div>
+		<p>In our case, we run Hash-Min as follows:</p>
+		<div class="alert alert-info">
+			<p>mpiexec -n <i>N</i> -f $HOME/hashmin/conf $HOME/hashmin/run</p>
+		</div>
+		<p>Sometimes, automatic HDFS binding may fail and the program will report <b>Input path "/toyFolder" does not
+        exist!</b> In this case, you need to edit the system program file <b>utils/ydhdfs.h</b> to hardwire the
+        connection. Change <b>hdfsConnect("default", 0)</b> of function <b>getHdfsFS()</b> to
+        <b>hdfsConnect({<i>your_NameNode_IP</i>}, {<i>your_NameNode_port</i>})</b> as configured in
+        <b>$HADOOP_HOME/conf/core-site.xml(Hadoop 1.x)</b> or <b>$HADOOP_HOME/etc/hadoop/core-site.xml(Hadoop 2.x)</b>.</p>
+		<p>&nbsp;</p>
+		
+		<h2>Putting Large Files to HDFS</h2>
+		<p>Pregel+ requires that a large graph data is partitioned into smaller files under the same data folder, and these files are loaded by different computing processes during graph computing.</p>
+		<p>To achieve this goal, we cannot use the command <b>hadoop fs -put {local-file} {HDFS-path}</b>. Otherwise, all the data file is loaded by one computing process, and the other processes simply wait for it to finish loading.</p>
+		<p>We remark that parallel loading only speeds up data loading, and has no influence on the performance of graph computing. This is because, after all processes finish data loading, they need to exchange vertices so that each vertex reaches its process which is decided by hashing the vertex ID.</p>
+		<p>To put a large graph data onto HDFS, one needs to compile and run <a href="code/put.cpp" target="_blank">this data-putting program</a> with two arguments being <b>{local-file} {HDFS-path}</b>.</p>
+	</div>
+    <!-- /.container -->
+
+    <!-- JavaScript -->
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-53484769-1', 'auto');ga('send', 'pageview');</script>
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
-
-</body>
-
-</html>
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <footer class="small">
+    <hr>
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+    <br>
+    &nbsp;
+    <br>
+    </footer>
+</body>
+
+</html>
